@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Productos</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    td, th { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+    form input { margin: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Gestión de Productos</h1>
+
+  <form id="formulario">
+    <input type="text" id="nombre" placeholder="Nombre" required>
+    <input type="number" id="precio" placeholder="Precio" required>
+    <input type="number" id="stock" placeholder="Stock" required>
+    <button type="submit" id="btn-submit">Agregar producto</button>
+  </form>
+
+
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+<script>
+  const API = 'http://localhost:3000/productos';
+
+  const tabla = document.querySelector('#tabla tbody');
+  const form = document.querySelector('#formulario');
+  const btnSubmit = document.querySelector('#btn-submit');
+
+  let editando = false;
+  let productoEditandoId = null;
+
+  const cargarProductos = async () => {
+    tabla.innerHTML = '';
+    const res = await fetch(API);
+    const productos = await res.json();
+
+    productos.forEach(p => {
+      const fila = document.createElement('tr');
+      fila.innerHTML = `
+        <td>${p.id}</td>
+        <td>${p.nombre}</td>
+        <td>${p.precio}</td>
+        <td>${p.stock}</td>
+        <td>
+          <button onclick="eliminarProducto(${p.id})">Eliminar</button>
+          <button onclick="editarProducto(${p.id}, '${p.nombre}', ${p.precio}, ${p.stock})">Editar</button>
+        </td>
+      `;
+      tabla.appendChild(fila);
+    });
+  };
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const nombre = document.querySelector('#nombre').value;
+    const precio = parseFloat(document.querySelector('#precio').value);
+    const stock = parseInt(document.querySelector('#stock').value);
+
+    if (!nombre || isNaN(precio) || isNaN(stock)) return alert('Datos inválidos');
+
+    if (editando) {
+      await fetch(`${API}/${productoEditandoId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, precio, stock })
+      });
+      editando = false;
+      productoEditandoId = null;
+      btnSubmit.textContent = 'Agregar producto';
+    } else {
+      await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, precio, stock })
+      });
+    }
+
+    form.reset();
+    cargarProductos();
+  });
+
+  async function eliminarProducto(id) {
+    if (!confirm('¿Eliminar este producto?')) return;
+    await fetch(`${API}/${id}`, { method: 'DELETE' });
+    cargarProductos();
+  }
+
+  function editarProducto(id, nombre, precio, stock) {
+    document.querySelector('#nombre').value = nombre;
+    document.querySelector('#precio').value = precio;
+    document.querySelector('#stock').value = stock;
+    editando = true;
+    productoEditandoId = id;
+    btnSubmit.textContent = 'Actualizar producto';
+  }
+
+  cargarProductos();
+</script>
+
+</body>
+</html>
