@@ -38,7 +38,7 @@ Este proyecto permite gestionar productos usando una **API REST construida con N
 
 ```bash
 git clone https://github.com/Pabloscom/Prueba-Tecnica-Patria-Seguros.git
-cd gestion-productos
+cd Prueba-Tecnica-Patria-Seguros
 ```
 
 ### 2. Instalar dependencias
