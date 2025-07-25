@@ -37,7 +37,7 @@ Este proyecto permite gestionar productos usando una **API REST construida con N
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/gestion-productos.git
+git clone https://github.com/Pabloscom/Prueba-Tecnica-Patria-Seguros.git
 cd gestion-productos
 ```
 
@@ -79,7 +79,7 @@ const pool = new Pool({
 ## ▶️ Cómo iniciar el servidor
 
 ```bash
-node server.js
+node src/server.js
 ```
 
 Verás en consola:
@@ -131,7 +131,7 @@ Desde ahí podés:
 
 ## 🧪 Probar con Postman
 
-1. Iniciá el servidor (`node server.js`)
+1. Iniciá el servidor (`node src/server.js`)
 2. En Postman:
    - **GET** `http://localhost:3000/productos`
    - **POST** `http://localhost:3000/productos`
@@ -140,25 +140,3 @@ Desde ahí podés:
    - **DELETE** `http://localhost:3000/productos/1`
 
 ---
-
-## 📤 Exportar los datos de productos (opcional)
-
-Para exportar a CSV desde PostgreSQL:
-
-```bash
-psql -U postgres -d dbPrueba -c "COPY productos TO STDOUT WITH CSV HEADER" > productos.csv
-```
-
----
-
-## 🧼 Limpiar tabla (opcional)
-
-```sql
-TRUNCATE TABLE productos RESTART IDENTITY;
-```
-
----
-
-## 📄 Licencia
-
-MIT © Tu Nombre
